@@ -6,11 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCommentRequest extends FormRequest
 {
-    public function wantsJson()
-    {
-        dd(11);
-        return true;
-    }
     /**
      * Get the validation rules that apply to the request.
      *
