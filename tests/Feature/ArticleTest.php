@@ -59,10 +59,6 @@ class ArticleTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure(['status']);
 
-        $this->assertDatabaseHas('jobs', [
-            'queue' => config('queue.connections.database.queue')
-        ]);
-
         Queue::assertPushed(AddNewCommentJob::class, function ($job) use ($data, $article) {
             return $job->commentData['subject'] == ($data['subject'])
                 && $job->commentData['article_id'] == $article->id;
