@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Article
+ *
  * @package App\Models
  * @property int $id
  * @property string $slug
@@ -18,6 +19,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $image
  * @property int $count_views
  * @property int $likes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Comment[] $comments
+ * @property-read int|null $comments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ArticleTag[] $tags
+ * @property-read int|null $tags_count
+ * @method static \Database\Factories\ArticleFactory factory(...$parameters)
+ * @method static Builder|Article miniatures()
+ * @method static Builder|Article newModelQuery()
+ * @method static Builder|Article newQuery()
+ * @method static Builder|Article query()
+ * @method static Builder|Article whereCountViews($value)
+ * @method static Builder|Article whereCreatedAt($value)
+ * @method static Builder|Article whereDescription($value)
+ * @method static Builder|Article whereId($value)
+ * @method static Builder|Article whereImage($value)
+ * @method static Builder|Article whereLikes($value)
+ * @method static Builder|Article whereSlug($value)
+ * @method static Builder|Article whereTitle($value)
+ * @method static Builder|Article whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Article extends Model
 {
