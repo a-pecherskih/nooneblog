@@ -14,6 +14,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\CommentController;
+
+Route::group(['namespace' => 'Api'], function () {
+
+    Route::group(['prefix' => 'article', 'as' => 'article.'], function () {
+        Route::post('article/{article}/comment', [CommentController::class, 'save'])->name('add_comment');
+        Route::put('article/{article}/like', [ArticleController::class, 'addLike'])->name('like');
+        Route::put('article/{article}/count-views', [ArticleController::class, 'addCountView'])->name('count_views');
+        Route::get('article/{article}', [ArticleController::class, 'show'])->name('show');
+    });
+
+    Route::group(['as' => 'articles.'], function () {
+        Route::get('articles/{tag}', [ArticleController::class, 'listByTag'])->name('tag');
+        Route::get('articles', [ArticleController::class, 'listArticles'])->name('list');
+        Route::get('main-articles', [ArticleController::class, 'mainArticles'])->name('main');
+    });
 });
