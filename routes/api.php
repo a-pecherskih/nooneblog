@@ -20,10 +20,10 @@ use App\Http\Controllers\Api\CommentController;
 Route::group(['namespace' => 'Api'], function () {
 
     Route::group(['prefix' => 'article', 'as' => 'article.'], function () {
-        Route::post('article/{article}/comment', [CommentController::class, 'save'])->name('add_comment');
-        Route::put('article/{article}/like', [ArticleController::class, 'addLike'])->name('like');
-        Route::put('article/{article}/count-views', [ArticleController::class, 'addCountView'])->name('count_views');
-        Route::get('article/{article}', [ArticleController::class, 'show'])->name('show');
+        Route::post('/{article}/comment', [CommentController::class, 'save'])->name('add_comment');
+        Route::put('/{article}/like', [ArticleController::class, 'addLike'])->name('like');
+        Route::put('/{article}/count-view', [ArticleController::class, 'addCountView'])->name('count_views');
+        Route::get('/{article}', [ArticleController::class, 'show'])->name('show');
     });
 
     Route::group(['as' => 'articles.'], function () {

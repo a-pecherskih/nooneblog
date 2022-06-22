@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Helpers\CacheHelper;
 use App\Models\Article;
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * Class ArticleService
@@ -62,12 +63,9 @@ class ArticleService
      * @param Article $article
      * @return int
      */
-    public function addLike(Article $article): int
+    public function addLike(string $slug): int
     {
-        $article->likes++;
-        $article->save();
-
-        return $article->likes;
+        return $this->incrementCountColumn($slug, 'likes');
     }
 
     /**
@@ -76,11 +74,40 @@ class ArticleService
      * @param Article $article
      * @return int
      */
-    public function addCountViews(Article $article): int
+    public function addCountViews(string $slug): int
     {
-        $article->count_views++;
-        $article->save();
+        return $this->incrementCountColumn($slug, 'count_views');
+    }
 
-        return $article->count_views;
+    /**
+     * Add value to cache
+     *
+     * @param string $slug
+     * @param string $columnName
+     * @return int
+     */
+    private function incrementCountColumn(string $slug, string $columnName): int
+    {
+        $cacheKey = config('article.cache_key_counts');
+
+        $articles = CacheHelper::getCacheData($cacheKey) ?? [];
+
+        if (isset($articles[$slug][$columnName])) {
+            $articles[$slug][$columnName] += 1;
+            $count = $articles[$slug][$columnName];
+        } else {
+            $article = Article::query()
+                ->where(['slug' => $slug])
+                ->firstOrFail();
+
+            $count = ++$article->$columnName;
+
+            $articles[$slug]['likes'] = $article->likes;
+            $articles[$slug]['count_views'] = $article->count_views;
+        }
+
+        CacheHelper::setCacheData($cacheKey, $articles);
+
+        return $count;
     }
 }

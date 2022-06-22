@@ -74,11 +74,11 @@ class ArticleController extends Controller
      * @param ArticleService $service
      * @return JsonResponse
      */
-    public function addLike(Article $article, ArticleService $service): JsonResponse
+    public function addLike(string $slug, ArticleService $service): JsonResponse
     {
         return response()->json([
             'status' => Response::HTTP_OK,
-            'likes' => $service->addLike($article)
+            'likes' => $service->addLike($slug)
         ]);
     }
 
@@ -89,11 +89,11 @@ class ArticleController extends Controller
      * @param ArticleService $service
      * @return JsonResponse
      */
-    public function addCountView(Article $article, ArticleService $service): JsonResponse
+    public function addCountView(string $slug, ArticleService $service): JsonResponse
     {
         return response()->json([
             'status' => Response::HTTP_OK,
-            'count_views' => $service->addCountViews($article)
+            'count_views' => $service->addCountViews($slug)
         ]);
     }
 }

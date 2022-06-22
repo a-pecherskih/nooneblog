@@ -9,3 +9,7 @@
 - php artisan db:seed
 - php artisan test
 
+### Команда для обновления количества лайков и просмотров
+- php artisan article:update-counts
+
+

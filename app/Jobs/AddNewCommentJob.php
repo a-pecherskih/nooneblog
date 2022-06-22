@@ -36,7 +36,7 @@ class AddNewCommentJob implements ShouldQueue
      */
     public function handle()
     {
-        sleep(3);
+        sleep(600);
 
         Comment::query()->create([
             'created_at' => Carbon::now(),
