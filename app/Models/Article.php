@@ -48,7 +48,7 @@ class Article extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['title', 'description', 'slug'];
+    protected $fillable = ['title', 'description', 'slug', 'likes', 'count_views', 'image'];
 
     /**
      * @return string
