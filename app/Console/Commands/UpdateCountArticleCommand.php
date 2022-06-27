@@ -49,7 +49,7 @@ class UpdateCountArticleCommand extends Command
             ]);
         }
 
-        CacheHelper::forgetCacheData($cacheKey) ?? [];
+        CacheHelper::forgetCacheData($cacheKey);
 
         $this->info('Updated ' . count($articles) . ' articles');
 
