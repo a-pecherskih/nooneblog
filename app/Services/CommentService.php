@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use App\Jobs\AddNewCommentJob;
-use App\Models\Comment;
-use Carbon\Carbon;
+use App\ModelsDTO\CommentDTO;
 
 /**
  * Class CommentService
@@ -18,15 +17,10 @@ class CommentService
      * @param int $articleId
      * @param array $data
      */
-    public function createComment(int $articleId, array $data): void
+    public function createComment(string $slug, array $data): void
     {
-        $commentData = [
-            'created_at' => Carbon::now(),
-            'subject' => $data['subject'],
-            'body' => $data['body'],
-            'article_id' => $articleId,
-        ];
+        $commentDTO = new CommentDTO($slug, $data['subject'], $data['body']);
 
-        AddNewCommentJob::dispatch($commentData)->onConnection('database');
+        AddNewCommentJob::dispatch($commentDTO)->onConnection('database');
     }
 }

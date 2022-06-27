@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Jobs\AddNewCommentJob;
 use App\Models\Article;
 use App\Models\Comment;
+use App\ModelsDTO\CommentDTO;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Queue;
@@ -59,9 +60,11 @@ class ArticleTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure(['status']);
 
-        Queue::assertPushed(AddNewCommentJob::class, function ($job) use ($data, $article) {
-            return $job->commentData['subject'] == ($data['subject'])
-                && $job->commentData['article_id'] == $article->id;
+        $commentDTO = new CommentDTO($article->slug, $data['subject'], $data['body']);
+
+        Queue::assertPushed(AddNewCommentJob::class, function ($job) use ($commentDTO) {
+            return $job->commentDTO->getArticleSlug() == $commentDTO->getArticleSlug()
+                && $job->commentDTO->getSubject() == $commentDTO->getSubject();
         });
     }
 
@@ -95,16 +98,19 @@ class ArticleTest extends TestCase
      *
      * @return void
      */
-    public function test_like()
+    public function test_increment_like()
     {
-        $article = Article::query()->inRandomOrder()->first();
+        $randomArticle = Article::query()->inRandomOrder()->first();
+        $response = $this->get(route('article.show', ['article' => $randomArticle->slug]));
+        $articleSlug = $response->json('article.slug');
+        $articleLikes = $response->json('article.likes');
 
-        $response = $this->put(route('article.like', ['article' => $article->slug]));
+        $response = $this->put(route('article.like', ['article' => $articleSlug]));
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure(['status', 'likes']);
         $response->assertJsonFragment([
-            'likes' => $article->likes + 1
+            'likes' => $articleLikes + 1
         ]);
     }
 
@@ -115,14 +121,17 @@ class ArticleTest extends TestCase
      */
     public function test_increment_count_views()
     {
-        $article = Article::query()->inRandomOrder()->first();
+        $randomArticle = Article::query()->inRandomOrder()->first();
+        $response = $this->get(route('article.show', ['article' => $randomArticle->slug]));
+        $articleSlug = $response->json('article.slug');
+        $articleCountViews = $response->json('article.count_views');
 
-        $response = $this->put(route('article.count_views', ['article' => $article->slug]));
+        $response = $this->put(route('article.count_views', ['article' => $articleSlug]));
 
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure(['status', 'count_views']);
         $response->assertJsonFragment([
-            'count_views' => $article->count_views + 1
+            'count_views' => $articleCountViews + 1
         ]);
     }
 }

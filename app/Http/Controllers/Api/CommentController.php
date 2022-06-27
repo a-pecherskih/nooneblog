@@ -19,11 +19,11 @@ class CommentController extends Controller
      * @param CommentService $service
      * @return JsonResponse
      */
-    public function save(Article $article, StoreCommentRequest $request, CommentService $service): JsonResponse
+    public function save(string $slug, StoreCommentRequest $request, CommentService $service): JsonResponse
     {
         $inputs = $request->only(['subject', 'body']);
 
-        $service->createComment($article->id, $inputs);
+        $service->createComment($slug, $inputs);
 
         return response()->json([
             'status' => Response::HTTP_OK

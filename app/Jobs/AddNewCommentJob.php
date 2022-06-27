@@ -2,8 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Article;
 use App\Models\Comment;
-use Carbon\Carbon;
+use App\ModelsDTO\CommentDTO;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -15,18 +16,18 @@ class AddNewCommentJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var array
+     * @var CommentDTO
      */
-    public $commentData;
+    public CommentDTO $commentDTO;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(array $commentData)
+    public function __construct(CommentDTO $commentDTO)
     {
-        $this->commentData = $commentData;
+        $this->commentDTO = $commentDTO;
     }
 
     /**
@@ -38,11 +39,26 @@ class AddNewCommentJob implements ShouldQueue
     {
         sleep(600);
 
+        $this->createComment($this->commentDTO);
+    }
+
+    /**
+     * Create comment
+     *
+     * @param CommentDTO $commentDTO
+     */
+    private function createComment(CommentDTO $commentDTO)
+    {
+        $article = Article::query()
+            ->where('slug', $commentDTO->getArticleSlug())
+            ->first();
+        if (is_null($article)) return;
+
         Comment::query()->create([
-            'created_at' => Carbon::now(),
-            'subject' => $this->commentData['subject'],
-            'body' => $this->commentData['body'],
-            'article_id' => $this->commentData['article_id'],
+            'created_at' => $commentDTO->getDate()->format('Y-m-d'),
+            'subject' => $commentDTO->getSubject(),
+            'body' => $commentDTO->getBody(),
+            'article_id' => $article->id,
         ]);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Article\ArticleResource;
+use App\Http\Resources\Article\ArticlesResource;
 use App\Models\Article;
 use App\Services\ArticleService;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +22,7 @@ class ArticleController extends Controller
     {
         return response()->json([
             'status' => Response::HTTP_OK,
-            'articles' => $service->getMainArticles()
+            'articles' => new ArticlesResource($service->getMainArticles())
         ]);
     }
 
@@ -34,7 +36,7 @@ class ArticleController extends Controller
     {
         return response()->json([
             'status' => Response::HTTP_OK,
-            'data' => $service->listArticles()
+            'data' => new ArticlesResource($service->listArticles())
         ]);
     }
 
@@ -49,7 +51,7 @@ class ArticleController extends Controller
     {
         return response()->json([
             'status' => Response::HTTP_OK,
-            'data' => $service->getArticlesByTag($tag)
+            'data' => new ArticlesResource($service->getArticlesByTag($tag))
         ]);
     }
 
@@ -63,7 +65,7 @@ class ArticleController extends Controller
     {
         return response()->json([
             'status' => Response::HTTP_OK,
-            'article' => $article->load(['comments', 'tags'])
+            'article' => new ArticleResource($article->load(['comments', 'tags']))
         ]);
     }
 

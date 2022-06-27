@@ -40,7 +40,7 @@ class ArticlesTest extends TestCase
         $article = Article::query()->latest()->first();
 
         $response->assertStatus(Response::HTTP_OK);
-        $response->assertJsonCount(config('pagination.count.articles'), 'data.data');
+        $response->assertJsonCount(config('pagination.count.articles'), 'data');
         $response->assertJsonFragment([
             'slug' => $article->slug
         ]);
